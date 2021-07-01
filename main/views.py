@@ -30,10 +30,14 @@ def things(request):
 			"things": User.objects.get(pk=request.session["user"]).things.all(),
 			"devices": User.objects.get(pk=request.session["user"]).devices.all()
 		}
+		print(User.objects.get(pk=request.session["user"]).devices.all())
 		return render(request, "things.html", context)
 
 
 class ThingAdd(View):
 	def post(self, request):
-		makething = Thing(request.POST.get("name"),
-		                  User.objects.get(pk=request.session["user"]).devices.get(pk=request.POST.get("device")))
+		makething = Thing(name=request.POST.get("name"),
+		                  device=User.objects.get(pk=request.session["user"]).devices.get(pk=request.POST.get("device")))
+		makething.save()
+		User.objects.get(pk=request.session["user"]).things.add(makething)
+		return HttpResponseRedirect("/things/")
