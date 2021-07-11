@@ -10,8 +10,8 @@ class Property(models.Model):
 		("D", "Decimal")
 	)
 	type = models.CharField(max_length=64, choices=TYPES)
-	key = models.CharField(max_length=64, primary_key=True)
-	value = models.CharField(max_length=64)
+	key = models.CharField(max_length=64)
+	value = models.CharField(max_length=64,null=True,blank=True)
 
 
 class Device(models.Model):

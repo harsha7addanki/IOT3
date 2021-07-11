@@ -1,2 +1,75 @@
 {% extends "base.html" %}
-{% block title %}{% endblock %}
+{% block title %}{{ thing.name|capfirst }}{% endblock %}
+{% block main %}
+    <br/><br/>
+    <h1>{{ thing.name|capfirst }}</h1>
+    {% if thing.properties.all %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Key</th>
+              <th scope="col">Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for property in thing.properties.all %}
+                <tr>
+                    <td>{{ property.key }}</td>
+                    <td>
+                        {% if property.type == 'I' %}
+                            Integer
+                        {% elif property.type == 'S' %}
+                            String
+                        {% elif property.type == 'B' %}
+                            Boolean
+                        {% elif property.type == 'D' %}
+                            Decimal
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-prop">
+              Create An Property!
+        </button>
+    {% else %}
+        <br/><br/>
+        <div class="text-center">
+            <h1>Uh ... I Don't See Any Properties In This Thing</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-prop">
+                  Create An Property!
+            </button>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block ext %}
+    <div class="modal fade" id="mk-prop" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create An Thing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="propcreate" method="post" action="{% url 'propadd' thingid=thing.id %}">
+                        {% csrf_token %}
+                        <label for="name" class="form-label">Key:</label>
+                        <input class="form-control" id="key" name="key">
+                        <select class="form-select" id="type" name="type">
+                            <option value="I">Integer</option>
+                            <option value="S">String</option>
+                            <option value="B">Boolean</option>
+                            <option value="D">Decimal</option>
+                        </select>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary" form="propcreate">Create!</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+{% endblock %}

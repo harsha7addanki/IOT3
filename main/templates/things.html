@@ -1,28 +1,72 @@
 {% extends "base.html" %}
 {% block title %}Things{% endblock %}
 {% block main %}
-    {% if things %}
-        <br/><br/>
-        {% for thing in things %}
-            <div class="col-md-4 col-sm-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ thing.name }}</h5>
-                    <p class="card-text">Device: {{ thing.device.name }}</p>
-                    <a href="" class="btn btn-primary">Open Thing</a>
-                  </div>
-                </div>
-            </div>
-        {% endfor %}
-    {% else %}
-        <br/><br/>
-        <div style="text-align:center">
-            <h1>Oops Looks Like You Have No Things</h1>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              Create One!
-            </button>
+    </br></br>
+    <ul class="nav nav-pills" id="myTab" role="tablist" xmlns="http://www.w3.org/1999/html">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="home-tab" data-bs-toggle="tab" href="#things" role="tab" aria-controls="home" aria-selected="true">Things</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#devices" role="tab" aria-controls="profile" aria-selected="false">Devices</a>
+      </li>
 
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="things" role="tabpanel" aria-labelledby="home-tab">
+          {% if things %}
+            <h1>Things:</h1>
+            {% for thing in things %}
+                <div class="col-md-4 col-sm-6">
+                    <div class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ thing.name|capfirst }}</h5>
+                        <p class="card-text">Device: {{ thing.device.name }}</p>
+                        <a href="{% url 'thing' thing.id %}" class="btn btn-primary">Open Thing</a>
+                      </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <br/><br/>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-thing">
+                  Create Another Thing
+            </button>
+        {% else %}
+            <br/><br/>
+            <div style="text-align:center">
+                <h1>Oops Looks Like You Have No Things</h1>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-thing">
+                  Create One!
+                </button>
+            </div>
+        {% endif %}
+      </div>
+      <div class="tab-pane fade" id="devices" role="tabpanel" aria-labelledby="profile-tab">
+          {% if devices %}
+              </br></br>
+            <h1>Devices:</h1>
+            <ul class="list-group">
+                {% for device in devices %}
+                    <li class="list-group-item">{{ device.name }}<div class="text-end"><a class="btn btn-danger">Delete device</a></div></li>
+                {% endfor %}
+            </ul>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-device">
+              Create Another Device!
+            </button>
+          {% else %}
+              </br></br>
+            <div class="text-center">
+                <h1>Oops Looks Like You Have No Devices</h1>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-device">
+                  Create One!
+                </button>
+            </div>
+        {% endif %}
+      </div>
+    </div>
+
+{% endblock %}
+{% block ext %}
+    <div class="modal fade" id="mk-thing" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -30,7 +74,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <form id="thingcreate" method="post" action="{% url 'thing' %}">
+                    <form id="thingcreate" method="post" action="{% url 'thinga' %}">
                         {% csrf_token %}
                         <label for="name" class="form-label">Thing Name:</label>
                         <input class="form-control" id="name" name="name">
@@ -43,13 +87,36 @@
                     </form>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="">Cancel</button>
                     <button type="submit" class="btn btn-primary" form="thingcreate">Create!</button>
                   </div>
                 </div>
               </div>
             </div>
         </div>
+    <div class="modal fade" id="mk-device" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create An Thing</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="devcre" method="post" action="{% url 'devadd' %}">
+                        {% csrf_token %}
+                        <label for="name" class="form-label">Device Name:</label>
+                        <input class="form-control" id="name" name="name" onchange="document.getElementById('devsec').value = btoa(this.value);">
+                        <label for="devsec" class="form-label">Dev Secret(You Can only obtain it once):</label>
+                        <input class="form-control" id="devsec" name="devsec" readonly>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit"  onclick="document.getElementById('devcre').reset();" class="btn btn-primary" form="devcre">Create!</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
 
-    {% endif %}
 {% endblock %}
