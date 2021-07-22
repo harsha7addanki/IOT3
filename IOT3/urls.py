@@ -14,10 +14,37 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
+from django.shortcuts import render
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include("main.urls")),
-    path('api/', include("api.urls"))
+	path('admin/', admin.site.urls),
+	path('', include("main.urls")),
+	path('api/', include("api.urls"))
 ]
+
+
+def error_404(request, exception):
+	data = {}
+	return render(request, 'err/404.html', data, status=404)
+
+
+def error_500(request):
+	data = {}
+	return render(request, 'err/500.html', data ,status=500)
+
+
+def error_400(request, exception):
+	data = {}
+	return render(request, 'err/400.html', data, status=400)
+
+
+def error_403(request, exception):
+	data = {}
+	return render(request, 'err/403.html', data, status=403)
+
+
+handler404 = error_404
+handler500 = error_500
+handler403 = error_403
+handler400 = error_400

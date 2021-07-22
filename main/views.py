@@ -9,6 +9,7 @@ def logout(request):
 	del request.session["user"]
 	return HttpResponseRedirect("/")
 
+
 def login(request):
 	try:
 		request.session["user"]
@@ -16,13 +17,13 @@ def login(request):
 		return render(request, "login.html")
 	return HttpResponseRedirect("/things/")
 
+
 class SignUp(View):
-	def post(self,request):
+	def post(self, request):
 		user = User(username=request.POST.get("username"), password=request.POST.get("pass"))
 		user.save()
 		request.session["user"] = request.POST.get("username")
 		return HttpResponseRedirect("/things/")
-
 
 
 class LoginUsr(View):
@@ -102,7 +103,7 @@ class DevAdd(View):
 
 
 class ThingDel(View):
-	def get(self, request,id):
+	def get(self, request, id):
 		try:
 			request.session["user"]
 		except KeyError:
@@ -112,7 +113,7 @@ class ThingDel(View):
 
 
 class PropDel(View):
-	def get(self, request, thingid,id):
+	def get(self, request, thingid, id):
 		try:
 			request.session["user"]
 		except KeyError:
