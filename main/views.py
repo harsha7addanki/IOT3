@@ -5,9 +5,24 @@ from models.models import User, Thing, Device, Property
 
 
 # Create your views here.
+def logout(request):
+	del request.session["user"]
+	return HttpResponseRedirect("/")
 
 def login(request):
-	return render(request, "login.html")
+	try:
+		request.session["user"]
+	except KeyError:
+		return render(request, "login.html")
+	return HttpResponseRedirect("/things/")
+
+class SignUp(View):
+	def post(self,request):
+		user = User(username=request.POST.get("username"), password=request.POST.get("pass"))
+		user.save()
+		request.session["user"] = request.POST.get("username")
+		return HttpResponseRedirect("/things/")
+
 
 
 class LoginUsr(View):
@@ -25,68 +40,92 @@ class LoginUsr(View):
 
 
 def things(request):
-	if request.session["user"]:
-		context = {
-			"things": User.objects.get(pk=request.session["user"]).things.all(),
-			"devices": User.objects.get(pk=request.session["user"]).devices.all()
-		}
-		print(User.objects.get(pk=request.session["user"]).devices.all())
-		return render(request, "things.html", context)
+	try:
+		request.session["user"]
+	except KeyError:
+		return render(request, "login.html")
+	context = {
+		"things": User.objects.get(pk=request.session["user"]).things.all(),
+		"devices": User.objects.get(pk=request.session["user"]).devices.all()
+	}
+	print(User.objects.get(pk=request.session["user"]).devices.all())
+	return render(request, "things.html", context)
 
 
 def thing(request, thingid):
-	if request.session["user"]:
-		context = {
-			"thing": User.objects.get(pk=request.session["user"]).things.get(pk=thingid)
-		}
-		return render(request, "thing.html", context)
+	try:
+		request.session["user"]
+	except KeyError:
+		return render(request, "login.html")
+	context = {
+		"thing": User.objects.get(pk=request.session["user"]).things.get(pk=thingid)
+	}
+	return render(request, "thing.html", context)
 
 
 class ThingAdd(View):
 	def post(self, request):
-		if request.session["user"]:
-			makething = Thing(name=request.POST.get("name"),
-			                  device=User.objects.get(pk=request.session["user"]).devices.get(
-				                  pk=request.POST.get("device")))
-			makething.save()
-			User.objects.get(pk=request.session["user"]).things.add(makething)
-			return HttpResponseRedirect("/things/")
+		try:
+			request.session["user"]
+		except KeyError:
+			return render(request, "login.html")
+		makething = Thing(name=request.POST.get("name"),
+		                  device=User.objects.get(pk=request.session["user"]).devices.get(
+			                  pk=request.POST.get("device")))
+		makething.save()
+		User.objects.get(pk=request.session["user"]).things.add(makething)
+		return HttpResponseRedirect("/things/")
 
 
 class PropAdd(View):
 	def post(self, request, thingid):
-		if request.session["user"]:
-			makeprop = Property(key=request.POST.get("key"), type=request.POST.get("type"))
-			makeprop.save()
-			User.objects.get(pk=request.session["user"]).things.get(pk=thingid).properties.add(makeprop)
-			return HttpResponseRedirect("/thing/" + str(thingid))
+		try:
+			request.session["user"]
+		except KeyError:
+			return render(request, "login.html")
+		makeprop = Property(key=request.POST.get("key"), type=request.POST.get("type"))
+		makeprop.save()
+		User.objects.get(pk=request.session["user"]).things.get(pk=thingid).properties.add(makeprop)
+		return HttpResponseRedirect("/thing/" + str(thingid))
 
 
 class DevAdd(View):
 	def post(self, request):
-		if request.session["user"]:
-			makedev = Device(name=request.POST.get("name"), dev_secret=request.POST.get("devsec"))
-			makedev.save()
-			User.objects.get(pk=request.session["user"]).devices.add(makedev)
-			return HttpResponseRedirect("/things/")
+		try:
+			request.session["user"]
+		except KeyError:
+			return render(request, "login.html")
+		makedev = Device(name=request.POST.get("name"), dev_secret=request.POST.get("devsec"))
+		makedev.save()
+		User.objects.get(pk=request.session["user"]).devices.add(makedev)
+		return HttpResponseRedirect("/things/")
 
 
 class ThingDel(View):
-	def post(self, request):
-		if request.session["user"]:
-			Thing.objects.filter(id=request.POST.get("id")).delete()
-			return HttpResponseRedirect("/things/")
+	def get(self, request,id):
+		try:
+			request.session["user"]
+		except KeyError:
+			return render(request, "login.html")
+		Thing.objects.filter(id=id).delete()
+		return HttpResponseRedirect("/things/")
 
 
 class PropDel(View):
-	def post(self, request, thingid):
-		if request.session["user"]:
-			Property.objects.filter(id=request.POST.get("id")).delete()
-			return HttpResponseRedirect("/thing/" + str(thingid))
+	def get(self, request, thingid,id):
+		try:
+			request.session["user"]
+		except KeyError:
+			return render(request, "login.html")
+		Property.objects.filter(id=id).delete()
+		return HttpResponseRedirect("/thing/" + str(thingid))
 
 
 class DevDel(View):
-	def post(self, request):
-		if request.session["user"]:
-			Device.objects.filter(id=request.POST.get("id")).delete()
-			return HttpResponseRedirect("/things/")
+	def get(self, request, id):
+		try:
+			request.session["user"]
+		except KeyError:
+			return render(request, "login.html")
+		Device.objects.filter(id=id).delete()
+		return HttpResponseRedirect("/things/")

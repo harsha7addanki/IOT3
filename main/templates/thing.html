@@ -9,6 +9,7 @@
             <tr>
               <th scope="col">Key</th>
               <th scope="col">Type</th>
+              <th scope="col">Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -26,6 +27,7 @@
                             Decimal
                         {% endif %}
                     </td>
+                    <td><a href="{% url "propdel" thing.id property.id %}">🗑</a></td>
                 </tr>
             {% endfor %}
           </tbody>

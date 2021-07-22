@@ -22,6 +22,7 @@
                         <h5 class="card-title">{{ thing.name|capfirst }}</h5>
                         <p class="card-text">Device: {{ thing.device.name }}</p>
                         <a href="{% url 'thing' thing.id %}" class="btn btn-primary">Open Thing</a>
+                        <a href="{% url 'thingd' thing.id %}" class="btn btn-danger">Delete Thing</a>
                       </div>
                     </div>
                 </div>
@@ -46,7 +47,7 @@
             <h1>Devices:</h1>
             <ul class="list-group">
                 {% for device in devices %}
-                    <li class="list-group-item">{{ device.name }}<div class="text-end"><a class="btn btn-danger">Delete device</a></div></li>
+                    <li class="list-group-item">{{ device.name }}<div class="text-end"><a class="btn btn-danger" href="{% url "devdel" device.id %}">Delete device</a></div></li>
                 {% endfor %}
             </ul>
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mk-device">
@@ -112,7 +113,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit"  onclick="document.getElementById('devcre').reset();" class="btn btn-primary" form="devcre">Create!</button>
+                    <button type="submit" class="btn btn-primary" form="devcre">Create!</button>
                   </div>
                 </div>
               </div>
