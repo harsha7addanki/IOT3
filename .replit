@@ -1,0 +1,4 @@
+
+language = "bash"
+#ASMD'S CODE BELOW kind of
+run = "python manage.py runserver 0.0.0.0:3000 --insecure"
