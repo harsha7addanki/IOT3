@@ -78,13 +78,15 @@
                     <form id="thingcreate" method="post" action="{% url 'thinga' %}">
                         {% csrf_token %}
                         <label for="name" class="form-label">Thing Name:</label>
-                        <input class="form-control" id="name" name="name">
+                        <input class="form-control" id="name" name="name"  onchange="document.getElementById('thgsec').value = btoa(btoa(this.value));">
                         <select class="form-select" aria-label="Device" name="device">
                             <option selected>Select an Device</option>
                             {% for device in devices %}
                                 <option value="{{ device.id }}">{{ device.name }}</option>
                             {% endfor %}
                         </select>
+                        <label for="thgsec" class="form-label">Thing Secret(You Can only obtain it once):</label>
+                        <input class="form-control" id="thgsec" name="secret" readonly>
                     </form>
                   </div>
                   <div class="modal-footer">

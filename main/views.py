@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponseRedirect
 from models.models import User, Thing, Device, Property
+import  base64
 
 
 # Create your views here.
@@ -71,8 +72,9 @@ class ThingAdd(View):
 		except KeyError:
 			return render(request, "login.html")
 		makething = Thing(name=request.POST.get("name"),
-		                  device=User.objects.get(pk=request.session["user"]).devices.get(
-			                  pk=request.POST.get("device")))
+		                  device=User.objects.get(pk=request.session["user"]).devices.get(pk=request.POST.get("device")),
+		                  thing_secret=request.POST.get("secret")
+		                  )
 		makething.save()
 		User.objects.get(pk=request.session["user"]).things.add(makething)
 		return HttpResponseRedirect("/things/")

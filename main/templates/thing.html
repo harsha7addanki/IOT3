@@ -56,7 +56,7 @@
                   <div class="modal-body">
                     <form id="propcreate" method="post" action="{% url 'propadd' thingid=thing.id %}">
                         {% csrf_token %}
-                        <label for="name" class="form-label">Key:</label>
+                        <label for="key" class="form-label">Key:</label>
                         <input class="form-control" id="key" name="key">
                         <select class="form-select" id="type" name="type">
                             <option value="I">Integer</option>

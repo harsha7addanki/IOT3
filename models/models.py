@@ -23,6 +23,7 @@ class Thing(models.Model):
 	name = models.CharField(max_length=64)
 	properties = models.ManyToManyField(Property, blank=True)
 	device = models.ForeignKey("Device", on_delete=models.CASCADE)
+	thing_secret = models.CharField(max_length=64)
 
 
 class User(models.Model):
